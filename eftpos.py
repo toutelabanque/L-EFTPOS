@@ -52,7 +52,7 @@ def submit():
         mode = 'password'
         label_contents.set("Please enter your password.")
     elif mode == 'password':
-        response = request('POST', '127.0.0.1', json={
+        response = request('POST', 'https://hpspectre.local/charge/', json={
             "payer-id": business_id,
             "recipient-id": entry_contents,
             "amount": amount,
