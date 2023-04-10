@@ -42,13 +42,13 @@ def submit():
     global mode
     if mode == 'amount':
         global amount
-        amount = entry_contents
+        amount = float(entry_contents.get())
         mode = 'payer-id'
         clear()
         label_contents.set("Please enter your account ID at La Banque.")
     elif mode == 'payer-id':
         global payer_id
-        payer_id = entry_contents
+        payer_id = entry_contents.get()
         mode = 'password'
         clear()
         label_contents.set("Please enter your password.")
