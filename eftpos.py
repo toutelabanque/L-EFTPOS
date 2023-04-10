@@ -50,11 +50,12 @@ def submit():
         global payer_id
         payer_id = entry_contents
         mode = 'password'
+        clear()
         label_contents.set("Please enter your password.")
     elif mode == 'password':
         response = request('POST', 'https://hpspectre.local/charge/', json={
             "payer-id": business_id,
-            "recipient-id": entry_contents,
+            "recipient-id": entry_contents.get(),
             "amount": amount,
             "password": entry_contents,
             "taxable": True
