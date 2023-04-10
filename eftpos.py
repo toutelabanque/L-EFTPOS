@@ -54,10 +54,10 @@ def submit():
         label_contents.set("Please enter your password.")
     elif mode == 'password':
         response = request('POST', 'https://hpspectre.local/charge/', json={
-            "payer-id": business_id,
-            "recipient-id": entry_contents.get(),
+            "payer-id": payer_id,
+            "recipient-id": business_id,
             "amount": amount,
-            "password": entry_contents,
+            "password": entry_contents.get(),
             "taxable": True
         })
         label_contents.set({200: 'Paid $' + response.content, 401: 'Incorrect Password', 403: 'Failed; Must register EFTPOS',
