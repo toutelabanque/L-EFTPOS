@@ -2,7 +2,7 @@ from gpiozero import Button
 from requests import request, Response
 from tkinter import Tk, StringVar
 from tkinter.ttk import Entry, Label
-from os import environ
+from os import environ, system
 from socket import gaierror
 
 # Get business's account ID from environment variable else user input.
@@ -10,7 +10,7 @@ if environ.get('BUSINESS_ID'):
     business_id = environ['BUSINESS_ID']
 else:
     business_id = input("What is your business's account ID at La Banque? ")
-    environ['BUSINESS_ID'] = business_id
+    system("BUSINESS_ID = " + business_id + " && EXPORT BUSINESS_ID")
 
 root = Tk()
 
@@ -64,7 +64,7 @@ def submit():
                 "amount": amount,
                 "pin": entry_contents.get(),
                 "taxable": True
-            })
+            }, verify=False)
         except gaierror:
             response = Response()
             response.status_code = 503
