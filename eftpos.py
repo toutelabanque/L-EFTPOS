@@ -1,8 +1,9 @@
 from gpiozero import Button
-from requests import request
+from requests import request, Response
 from tkinter import Tk, StringVar
 from tkinter.ttk import Entry, Label
 from os import environ
+from socket import gaierror
 
 # Get business's account ID from environment variable else user input.
 if environ.get('BUSINESS_ID'):
@@ -40,28 +41,39 @@ def clear():
 
 def submit():
     global mode
+    # Submit the amount due (from cashier) and switch to getting customer's ID
     if mode == 'amount':
         global amount
         amount = float(entry_contents.get())
         mode = 'payer-id'
         clear()
         label_contents.set("Please enter your account ID at La Banque.")
+    # Submit customer's ID and switch to getting their PIN
     elif mode == 'payer-id':
         global payer_id
         payer_id = entry_contents.get()
-        mode = 'password'
+        mode = 'pin'
         clear()
-        label_contents.set("Please enter your password.")
-    elif mode == 'password':
-        response = request('POST', 'https://hpspectre.local/charge/', json={
-            "payer-id": payer_id,
-            "recipient-id": business_id,
-            "amount": amount,
-            "password": entry_contents.get(),
-            "taxable": True
-        })
+        label_contents.set("Please enter your PIN.")
+    elif mode == 'pin':
+        # Make request and get response. Craft placeholder response on failure to connect.
+        try:
+            response = request('POST', 'https://hpspectre.local/charge/', json={
+                "payer-id": payer_id,
+                "recipient-id": business_id,
+                "amount": amount,
+                "pin": entry_contents.get(),
+                "taxable": True
+            })
+        except gaierror:
+            response = Response()
+            response.status_code = 503
+        
+        # Display response
         label_contents.set({200: 'Paid $' + response.content, 401: 'Incorrect Password', 403: 'Failed; Must register EFTPOS',
-                           404: 'Nonexistent user'}.get(response.status_code, 'Something went wrong'))  # Display response
+                           404: 'Nonexistent debit-enabled checking account', 503: 'La Banque is down.'}.get(response.status_code, 'Something went wrong.'))
+        
+        # Reset
         clear()
         mode = 'amount'
     else:
