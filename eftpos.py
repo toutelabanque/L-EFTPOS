@@ -10,7 +10,7 @@ if environ.get('BUSINESS_ID'):
     business_id = environ['BUSINESS_ID']
 else:
     business_id = input("What is your business's account ID at La Banque? ")
-    system("BUSINESS_ID = " + business_id + " && EXPORT BUSINESS_ID")
+    system("SET BUSINESS_ID = " + business_id + " && EXPORT BUSINESS_ID")
 
 root = Tk()
 
