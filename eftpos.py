@@ -15,7 +15,9 @@ else:
 root = Tk()
 
 entry_contents = StringVar()
-Entry(root, textvariable=entry_contents).pack()
+entry = Entry(root, textvariable=entry_contents)
+entry.pack()
+entry.focus_set()
 
 label_contents = StringVar()
 label_contents.set("Please enter the amount due below.")
