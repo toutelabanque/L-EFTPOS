@@ -72,7 +72,7 @@ def submit():
             response.status_code = 503
         
         # Display response
-        label_contents.set({200: 'Paid $' + response.content, 401: 'Incorrect Password', 403: 'Failed; Must register EFTPOS',
+        label_contents.set({200: 'Paid $' + str(response.content), 401: 'Incorrect PIN', 403: 'Failed; Must register EFTPOS',
                            404: 'Nonexistent debit-enabled checking account', 503: 'La Banque is down.'}.get(response.status_code, 'Something went wrong.'))
         
         # Reset
