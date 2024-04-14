@@ -1,6 +1,6 @@
 from gpiozero import Button
 from requests import request, Response
-from requests.exceptions import ConnectionError, JSONDecodeError
+from requests.exceptions import ConnectionError, JSONDecodeError, ReadTimeout
 from tkinter import Tk, StringVar
 from tkinter.ttk import Entry, Label
 from socket import gaierror
@@ -49,6 +49,7 @@ def submit():
     # Save the transaction type
     if mode == 'type':
         try:
+            global transaction_type
             if int(entry_contents.get()) < 1:
                 raise ValueError
             transaction_type = ('credit', 'debit')[int(entry_contents.get()) - 1]
@@ -59,6 +60,7 @@ def submit():
             label_contents.set("Please choose either Credit[1] or Debit[2].")
     # Save the amount due (from cashier) and switch to getting customer's ID
     elif mode == 'amount':
+        global amount
         try:
             amount = float(entry_contents.get())
             mode = 'payer-id'
@@ -68,6 +70,7 @@ def submit():
             label_contents.set("Invalid amount. Please try again.")
     # Save customer's ID and switch to getting their PIN
     elif mode == 'payer-id':
+        global payer_id
         payer_id = entry_contents.get()
         mode = 'pin'
         clear()
@@ -84,7 +87,7 @@ def submit():
                 "pin": entry_contents.get(),
                 "taxable": True
             }, verify=False, timeout=30.0)
-        except (gaierror, ConnectionError):
+        except (gaierror, ConnectionError, ReadTimeout):
             response = Response()
             response.status_code = 503
         try:
