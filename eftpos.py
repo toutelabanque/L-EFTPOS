@@ -23,10 +23,10 @@ entry.pack()
 entry.focus_set()
 
 label_contents = StringVar()
-label_contents.set("Please enter the amount due below.")
+label_contents.set('Credit[1] or Debit[2]?')
 Label(root, textvariable=label_contents).pack()
 
-mode = 'amount'
+mode = 'type'
 
 
 def type_(num: int):
@@ -45,10 +45,14 @@ def clear():
 
 
 def submit():
-    global mode
-    # Submit the amount due (from cashier) and switch to getting customer's ID
-    if mode == 'amount':
-        global amount
+    # Save the transaction type
+    if mode == 'type':
+        try:
+            transaction_type = ('credit', 'debit')[int(entry_contents.get())]
+        except (ValueError, IndexError):
+            label_contents.set("Please choose either Credit[1] or Debit[2].")
+    # Save the amount due (from cashier) and switch to getting customer's ID
+    elif mode == 'amount':
         try:
             amount = float(entry_contents.get())
             mode = 'payer-id'
@@ -56,9 +60,8 @@ def submit():
             label_contents.set("Please enter your account ID at La Banque.")
         except ValueError:
             label_contents.set("Invalid amount. Please try again.")
-    # Submit customer's ID and switch to getting their PIN
+    # Save customer's ID and switch to getting their PIN
     elif mode == 'payer-id':
-        global payer_id
         payer_id = entry_contents.get()
         mode = 'pin'
         clear()
@@ -68,7 +71,7 @@ def submit():
         # Make request and get response. Craft placeholder response on failure to connect.
         try:
             response = request('POST', 'https://hpspectre.local/charge/', json={
-                "type": 'debit',
+                "type": transaction_type,
                 "payer-id": payer_id,
                 "recipient-id": business_id,
                 "amount": amount * 100,
