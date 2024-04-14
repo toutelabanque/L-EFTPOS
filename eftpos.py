@@ -45,10 +45,16 @@ def clear():
 
 
 def submit():
+    global mode
     # Save the transaction type
     if mode == 'type':
         try:
-            transaction_type = ('credit', 'debit')[int(entry_contents.get())]
+            if int(entry_contents.get()) < 1:
+                raise ValueError
+            transaction_type = ('credit', 'debit')[int(entry_contents.get()) - 1]
+            mode = 'amount'
+            clear()
+            label_contents.set("Please enter the amount due.")
         except (ValueError, IndexError):
             label_contents.set("Please choose either Credit[1] or Debit[2].")
     # Save the amount due (from cashier) and switch to getting customer's ID
