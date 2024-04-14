@@ -83,7 +83,7 @@ def submit():
         except JSONDecodeError:
             content = "000"
         # Display response
-        label_contents.set({200: 'Successfully paid $' + str(round((float(content[0]) + float(content[2]))/100, 2)), 401: 'Incorrect PIN', 403: 'Failed; Must register EFTPOS',
+        label_contents.set({201: 'Successfully paid $' + str(round((float(content[0]) + float(content[2]))/100, 2)), 205: 'Insufficient Funds', 401: 'Incorrect PIN', 403: 'Failed; Must register EFTPOS',
                         404: 'Nonexistent debit-enabled checking account', 503: 'La Banque is down at the moment'}.get(response.status_code, 'Something went wrong'))
         
     # Reset
